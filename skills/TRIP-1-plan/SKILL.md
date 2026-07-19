@@ -20,6 +20,12 @@ Plan the following feature: $ARGUMENTS
 
 ---
 
+## Breadcrumb Discipline (docs/NOW.md)
+
+`docs/NOW.md` is the user's "where was I?" memory — `/TRIP-status` reads it on re-entry. At each transition marked **[NOW]** below, rewrite it using the 5-line format from `TRIP-status` (feature, phase, checkpoint, next action). Never let it grow past 5 lines.
+
+---
+
 ## Step 1: Discovery & Clarification (Interactive)
 
 **Do NOT start writing a plan immediately.** First, engage in a discovery conversation to fully understand the user's intent.
@@ -145,6 +151,10 @@ Depending on the feature (major, minor, patch), propose a new version using SemV
 
 ---
 
+**[NOW]** Plan file written → update `docs/NOW.md`: phase `plan`, checkpoint "plan drafted", next "Codex plan review".
+
+---
+
 ## Step 3: Codex Second-Opinion Review
 
 Before the user sees the plan, run the Codex plan review loop.
@@ -196,7 +206,7 @@ Handle feedback:
 - **If "Request changes"**: Update the plan and re-present. Run another Codex pass if changes are substantive.
 - **If "Needs rework"**: Discuss issues, rework the plan, and re-present.
 - **If "Other" (custom input)**: Handle accordingly.
-- **If "Approved"**: **Use the `AskUserQuestion` tool** to ask:
+- **If "Approved"**: **[NOW]** update `docs/NOW.md`: checkpoint "plan approved", next `/TRIP-2-implement <plan-path>` — this makes "Not yet" a completely safe stopping point. Then **use the `AskUserQuestion` tool** to ask:
   - **Question**: "Plan approved. Would you like to start implementation now?"
   - **Options**: "Yes, implement now" (proceed with `TRIP-2-implement` using this plan), "Not yet" (I'll implement later)
 

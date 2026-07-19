@@ -180,3 +180,7 @@ If `--ff-only` fails, the main branch moved during implementation — rebase the
 ```bash
 git push && git push --tags
 ```
+
+## Step 13: Reset the Breadcrumb
+
+Whether the user pushed or deferred, rewrite `docs/NOW.md` (5-line format from `TRIP-status`): feature `idle`, checkpoint "released vx.y.z" (add "— push pending" if deferred), next `/TRIP-1-plan <next idea>` or the oldest plan with open to-dos if one exists.
