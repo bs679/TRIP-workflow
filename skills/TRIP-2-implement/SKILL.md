@@ -36,11 +36,16 @@ Derive the short description from the plan/feature name. If already on a dedicat
 
 ---
 
-## Implementation Phase — Delegate to Codex
+## Implementation Phase — Orchestrate, Don't Implement
 
-You do NOT write the implementation yourself — delegate it to Codex via the `codex-implement` skill. (Exception: trivial unplanned changes of a few lines may be done directly.)
+You are the **orchestrator** — the frontier model in this session (e.g. Fable). Frontier tokens are for judgment: reading the plan, sizing batches, reviewing deltas, fixing subtle problems. You do NOT write the implementation yourself — bulk code goes to cheaper hands. (Exception: trivial unplanned changes of a few lines may be done directly.)
 
-Delegation is **batched**: Codex implements a few of the plan's checkboxes per turn, you review and fix each batch, then request the next one with your corrections attached. Same persistent thread throughout — context and conventions compound across turns.
+Two delegation routes, same batching discipline:
+
+- **Codex route** (default multi-agent setup): delegate via the `codex-implement` skill, tiered per batch with `CODEX_TIER`.
+- **Claude-only route** (no Codex CLI available, or user prefers single-vendor): delegate each batch to a Claude subagent via the Task/Agent tool — **Sonnet** for simple/standard batches, **Opus** for complex ones. Never burn the orchestrator's own context typing boilerplate.
+
+Delegation is **batched**: the implementer does a few of the plan's checkboxes per turn, you review and fix each batch, then request the next one with your corrections attached. On the Codex route the persistent thread carries context across turns; on the Claude route each subagent gets the plan path, its batch checkboxes, ARCHI.md, your accumulated conventions/corrections, and the same guardrails (no tests, no release ceremony, leave the tree compiling).
 
 ### 1. Read the plan and decide the batches
 
@@ -51,27 +56,43 @@ Read the plan fully and split its to-dos into batches. You are the judge of batc
 - Size by risk: novel, architectural, or security-critical work → small batches (down to one checkbox). Mechanical, repetitive work → larger batches.
 - Never span phase boundaries.
 - **One-shot escape hatch**: a low-risk plan (or phase) of ≤3-4 checkboxes is delegated whole — no batching ceremony.
-- **Filter out non-Codex items**: checkboxes needing human input, dashboard/console access, credentials, or ops actions are yours — resolve them with the user before or between batches, never delegate them.
+- **Filter out non-delegable items**: checkboxes needing human input, dashboard/console access, credentials, or ops actions are yours — resolve them with the user before or between batches, never delegate them.
+
+### 1b. Tier each batch — right-size the model to the work
+
+Every batch gets a cost tier before delegation. The plan's to-dos carry `[S]`/`[M]`/`[C]` markers (from TRIP-1); a batch's tier is the **highest** marker it contains. Unmarked to-dos: judge at batching time.
+
+| Tier | What qualifies | Codex route | Claude route |
+| --- | --- | --- | --- |
+| `simple` `[S]` | Mechanical/repetitive: renames, boilerplate, config, wiring that mirrors an existing pattern, docs | `CODEX_TIER=simple` (light model, medium effort) | Sonnet subagent |
+| `standard` `[M]` | Ordinary feature code following established ARCHI.md patterns | `CODEX_TIER=standard` (high effort) | Sonnet subagent |
+| `complex` `[C]` | Novel algorithms, architectural changes, concurrency, auth/security-critical paths, cross-cutting refactors | `CODEX_TIER=complex` (frontier model, xhigh effort) | Opus subagent |
+
+When in doubt between two tiers, take the higher one — a mis-tiered complex batch costs more in review rounds than the model discount saves. If a batch's review reveals it was under-tiered (heavy corrections on "simple" work), bump the tier for the remaining batches.
 
 ### 2. Delegate batch by batch
 
-**Start** the session with the first batch (state dir is handled by the script):
+**Codex route** — start the session with the first batch (state dir is handled by the script), prefixing the batch's tier:
 
 ```bash
+CODEX_TIER=<simple|standard|complex> \
 bash .claude/skills/codex-implement/scripts/start.sh \
     --prompt-file .claude/skills/codex-implement/prompts/implement.tpl \
     <plan-path> "Implement only: <batch-1 checkboxes>"   # or omit instructions to one-shot a small plan
 ```
 
-**Each next batch resumes the same thread**, carrying your review corrections as `--notes`:
+**Each next batch resumes the same thread**, carrying your review corrections as `--notes` and its own tier:
 
 ```bash
 export STATE_DIR=".claude/skills/codex-implement/state"
+CODEX_TIER=<tier-of-this-batch> \
 bash .claude/skills/codex-plan-review/scripts/resume.sh \
     --prompt-file .claude/skills/codex-implement/prompts/continue.tpl \
     --notes "<what you fixed after the last batch and why; conventions to apply from now on>" \
     <plan-path> "Now implement: <next batch checkboxes>"
 ```
+
+**Claude route** — spawn a subagent per batch with the model matching the tier (Sonnet for `[S]`/`[M]`, Opus for `[C]`). The subagent prompt must contain: the plan path, this batch's checkboxes verbatim, an instruction to read `docs/ARCHI.md` first, your accumulated correction notes, and the guardrails (leave the tree compiling/lint-clean, no test authoring, no commits, report what was done and any leftovers). Review its delta exactly like a Codex batch (step 3).
 
 **Parse the trailing tag** of each report:
 - `IMPLEMENTATION_COMPLETE` → review the batch (below).
@@ -151,10 +172,11 @@ Always run the Codex code review after the testing gate passes — no confirmati
 
 ### Loop
 
-Always export before invoking shared scripts:
+Always export before invoking shared scripts, and set the review tier to the **highest tier among the feature's batches, never below `standard`** (review quality is the last line of defense — only pure-`[S]` features may review at `standard`; anything with a `[C]` batch reviews at `complex`):
 
 ```bash
 export STATE_DIR=".claude/skills/codex-code-review/state"
+export CODEX_TIER=<standard|complex>
 ```
 
 1. **Start**:

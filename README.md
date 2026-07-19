@@ -165,6 +165,18 @@ flowchart TD
 
 As of mid july 2026, this Fable + GPT5.6 harness combo is absolute peak.
 
+### Pay for the Top, Not for Everything
+
+Frontier models won't stay cheap-to-free forever, and most checkboxes in a plan don't need one anyway. TRIP tiers the compute on **both** sides:
+
+- Every plan to-do carries an `[S]`/`[M]`/`[C]` complexity marker (simple / standard / complex), assigned during `TRIP-1-plan`.
+- The **orchestrator** (Fable) spends frontier tokens only on judgment: planning, batch sizing, delta reviews, fixes. It never types boilerplate.
+- **Claude side**: batches delegated to subagents — Sonnet for `[S]`/`[M]` work, Opus for `[C]` — when running the Claude-only route.
+- **Codex side**: the orchestrator exports `CODEX_TIER` per batch; `simple` drops to a light model at medium effort, `standard` runs Luna at high, `complex` gets Sol/Luna at xhigh. One env var (`CODEX_MODEL_LIGHT`) names your cheap model of choice.
+- Reviews never tier below `standard` — the last line of defense is not where you save money.
+
+Net effect: the expensive brains architect and audit; the affordable ones type. Your bill scales with how hard the work actually is, not with how many lines got written.
+
 ## Running Multiple Projects
 
 Got several things cooking? See [PROJECTS-SETUP.md](PROJECTS-SETUP.md) for the recommended `~/Projects` folder layout — one subfolder per project, Claude Code and Codex both operating across all of them, a one-glance dashboard, and an ideas inbox so shiny new thoughts stop hijacking the current feature.

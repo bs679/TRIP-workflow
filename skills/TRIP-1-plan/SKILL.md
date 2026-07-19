@@ -129,15 +129,17 @@ Depending on the feature (major, minor, patch), propose a new version using SemV
 
 ### Phase 1: [Phase Name] (if multiple phases are needed) or simply skip title if only one phase is needed
 
-- [ ] Task description
-- [ ] Another task
+- [ ] [M] Task description
+- [ ] [S] Another task
 
 ### Phase 2: [Phase Name] (if applicable)
 
-- [ ] Task description
-- [ ] Another task
+- [ ] [C] Task description
+- [ ] [M] Another task
 
 **Note**: For simple plans, a single phase is sufficient. Split into multiple phases only for complex features requiring sequential implementation.
+
+**Cost tiers**: Tag every to-do with a complexity marker — `[S]` simple/mechanical (renames, boilerplate, config, pattern-mirroring), `[M]` standard feature work following existing patterns, `[C]` complex (novel algorithms, architecture, concurrency, auth/security-critical). TRIP-2 uses these markers to route each batch to the right model tier — frontier compute only where it pays. When unsure, tag the higher tier.
 
 **Note**: Do NOT write test code during planning — the Test Impact section above only names what the TRIP-2 testing gate will run and author.
 ```
@@ -167,6 +169,8 @@ Options: "Yes, run Codex review" (recommended) / "Skip Codex, go to user review"
 Skip for trivial plans (single-file, low-risk). Run for non-trivial (new module, schema/algorithm change).
 
 ### Loop
+
+Set the review tier from the plan's highest to-do marker — `CODEX_TIER=standard` for plans whose to-dos are all `[S]`/`[M]`, `CODEX_TIER=complex` if any `[C]` — and export it for the whole loop.
 
 1. **Start**: `bash .claude/skills/codex-plan-review/scripts/start.sh --prompt-file .claude/skills/codex-plan-review/prompts/start.tpl <plan-path>`
 2. **Parse trailing tag**: `APPROVED` -> Step 4. `NEEDS_REWORK` -> surface to user. `REQUEST_CHANGES` -> continue.
