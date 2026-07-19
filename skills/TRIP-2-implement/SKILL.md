@@ -105,9 +105,9 @@ After each Codex report, before requesting the next batch:
 1. **Review the delta only**: `git status -s && git diff` — worktree vs index shows just this batch, since previous batches are staged (step 4). Check it against the plan, ARCHI.md patterns, and project conventions (DRY, KISS, comment discipline, error-handling and naming conventions from ARCHI.md).
 2. **Fix problems directly yourself** — no back-and-forth with Codex over fixes. What you fixed and why becomes the `--notes` of the next resume.
 3. **Micro-gate**: run the lint and typecheck/build commands from the Testing Gate (fast checks only — tests wait for the gate itself). Fix failures now.
-4. **Checkpoint**: `git add -A` — stage the reviewed batch so the next delta review starts clean. No commits — history stays clean for release.
-5. Verify the plan checkboxes Codex ticked match what the diff actually contains; cross any it completed but missed.
-6. **[NOW]** Batch staged → checkpoint "batch N/M staged", next "delegate batch N+1" (or "final pass" after the last batch).
+4. Verify the plan checkboxes the implementer ticked match what the diff actually contains; cross any it completed but missed.
+5. **[NOW]** Batch reviewed → checkpoint "batch N/M reviewed & staged", next "delegate batch N+1" (or "final pass" after the last batch).
+6. **Checkpoint**: `git add -A` — stages the reviewed batch **together with** the plan-checkbox and breadcrumb updates, so the next delta review (worktree vs index) shows only the next batch. Breadcrumb and checkbox edits must happen *before* this stage, never after. No commits — history stays clean for release.
 
 **Adapt as you go**: clean batch → grow the next one; heavy corrections → shrink the next one and spell out the fix pattern in the notes. If Codex ignores notes or repeats corrected mistakes late in a long session, reset the thread at the next batch boundary — the plan file plus a summary note rebuilds context.
 
