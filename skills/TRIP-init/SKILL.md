@@ -45,6 +45,16 @@ docs/
 
 Note: `5-tuto/` folder is created conditionally in Phase 6 only if the user wants tutorial generation.
 
+Also seed the session breadcrumb `docs/NOW.md` (read by `/TRIP-status`, updated by every TRIP skill at phase transitions):
+
+```markdown
+# NOW
+- **Feature**: idle
+- **Phase**: idle
+- **Checkpoint**: TRIP initialized
+- **Next**: /TRIP-1-plan <your first feature>
+```
+
 Files (`ARCHI.md`, `ARCHI-rules.md`, `changelog_table.md`, `TESTING.md`) will be created in later phases after codebase analysis.
 
 ---
@@ -1001,6 +1011,7 @@ Update: Technology Stack, and any affected architectural sections
 ## Post-Initialization Checklist
 
 - [ ] Core `docs/` folders created (Phase 1): 1-plans, 2-changelog, 3-code-review, 4-unit-tests, 6-memo
+- [ ] `docs/NOW.md` breadcrumb seeded (Phase 1)
 - [ ] Codebase thoroughly explored (Phase 2)
 - [ ] Current version identified (Phase 2)
 - [ ] Project type correctly classified (Phase 3)

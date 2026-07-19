@@ -30,6 +30,10 @@ git checkout -b feat/[short-description]   # or fix/[short-description]
 
 Derive the short description from the plan/feature name. If already on a dedicated branch for this work (e.g., resuming a session), continue on it.
 
+**Breadcrumb discipline**: at each transition marked **[NOW]** in this skill, rewrite `docs/NOW.md` (5-line format from `TRIP-status`). Every staged batch is a **safe stopping point** — the breadcrumb is what makes walking away cost-free.
+
+**[NOW]** Branch created → phase `implement`, checkpoint "branch created, batch 0/N", next "delegate batch 1".
+
 ---
 
 ## Implementation Phase — Delegate to Codex
@@ -82,6 +86,7 @@ After each Codex report, before requesting the next batch:
 3. **Micro-gate**: run the lint and typecheck/build commands from the Testing Gate (fast checks only — tests wait for the gate itself). Fix failures now.
 4. **Checkpoint**: `git add -A` — stage the reviewed batch so the next delta review starts clean. No commits — history stays clean for release.
 5. Verify the plan checkboxes Codex ticked match what the diff actually contains; cross any it completed but missed.
+6. **[NOW]** Batch staged → checkpoint "batch N/M staged", next "delegate batch N+1" (or "final pass" after the last batch).
 
 **Adapt as you go**: clean batch → grow the next one; heavy corrections → shrink the next one and spell out the fix pattern in the notes. If Codex ignores notes or repeats corrected mistakes late in a long session, reset the thread at the next batch boundary — the plan file plus a summary note rebuilds context.
 
@@ -135,6 +140,8 @@ If the change adds new logic, write its tests **now**, guided by the plan's **Te
 Format: `lint: clean | typecheck: clean | tests: N passed (M new)`
 
 Fix failures before starting the loop.
+
+**[NOW]** Gate green → checkpoint "testing gate green", next "Codex code review".
 
 ---
 
@@ -203,6 +210,7 @@ Surface reviews verbatim. Keep edits scoped. If Codex repeats a finding, re-read
 
 After Codex converges (or is skipped):
 
+- **[NOW]** Review converged → checkpoint "codex review APPROVED", next `/TRIP-3-release <plan-path>` — makes "No, continue later" below a safe stopping point.
 - Cross the corresponding checkboxes in the plan todo list (if any)
 - Then **use the `AskUserQuestion` tool** to ask:
   - **Question**: "Is the implementation complete?"

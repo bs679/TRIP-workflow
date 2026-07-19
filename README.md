@@ -1,6 +1,6 @@
 ![TRIP Workflow Banner](assets/trip-workflow-banner2.png)
 
-![Version](https://img.shields.io/badge/version-2.2.0-blue) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/PiLastDigit/TRIP-workflow/blob/master/LICENSE) ![Works with](https://img.shields.io/badge/Works_with-grey) [![Claude Code](https://img.shields.io/badge/Claude_Code-E5582B)](https://docs.anthropic.com/en/docs/claude-code) [![Codex CLI](https://img.shields.io/badge/Codex_CLI-10A37F)](https://developers.openai.com/codex/cli/) [![OpenCode](https://img.shields.io/badge/OpenCode-1a3a5c)](https://github.com/sst/opencode) [![Mistral Vibe](https://img.shields.io/badge/Mistral_Vibe-F7D046)](https://github.com/mistralai/mistral-vibe)
+![Version](https://img.shields.io/badge/version-2.3.0-blue) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/PiLastDigit/TRIP-workflow/blob/master/LICENSE) ![Works with](https://img.shields.io/badge/Works_with-grey) [![Claude Code](https://img.shields.io/badge/Claude_Code-E5582B)](https://docs.anthropic.com/en/docs/claude-code) [![Codex CLI](https://img.shields.io/badge/Codex_CLI-10A37F)](https://developers.openai.com/codex/cli/) [![OpenCode](https://img.shields.io/badge/OpenCode-1a3a5c)](https://github.com/sst/opencode) [![Mistral Vibe](https://img.shields.io/badge/Mistral_Vibe-F7D046)](https://github.com/mistralai/mistral-vibe)
 
 ## What is TRIP?
 
@@ -99,6 +99,10 @@ Init walks you through questions and replaces these placeholders based on your a
 
 ## More Skills
 
+### `/TRIP-status`
+
+"Where was I?" in one command. Reconstructs the current state (phase, batch, last safe checkpoint) from git, plan files, and Codex threads, then gives you **exactly one next action**. Backed by a 5-line `docs/NOW.md` breadcrumb that every TRIP skill keeps current at phase transitions. Built for interrupted sessions, context-switching brains, and Monday mornings — re-entry costs seconds, not a scroll through history.
+
 ### `/codex-implement`
 
 Implementation delegated to Codex CLI in a workspace-write sandbox.
@@ -160,6 +164,10 @@ flowchart TD
 ```
 
 As of mid july 2026, this Fable + GPT5.6 harness combo is absolute peak.
+
+## Running Multiple Projects
+
+Got several things cooking? See [PROJECTS-SETUP.md](PROJECTS-SETUP.md) for the recommended `~/Projects` folder layout — one subfolder per project, Claude Code and Codex both operating across all of them, a one-glance dashboard, and an ideas inbox so shiny new thoughts stop hijacking the current feature.
 
 ## MCP Servers: Less Is More
 
