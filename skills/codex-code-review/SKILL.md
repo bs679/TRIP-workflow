@@ -52,7 +52,7 @@ Codex uses `git status -s` / `git diff HEAD` in read-only sandbox. If those fail
 
 ## Notes
 
-- Model/effort defaults live in `codex-plan-review/scripts/_common.sh` (implementation → gpt-5.6-luna, plan/code review → gpt-5.6-sol, effort xhigh; derived from `STATE_DIR`). Adjust that one file to your preferred models, or override per run via `CODEX_MODEL` / `CODEX_EFFORT` env vars; the scripts echo the effective values.
+- Model/effort defaults live in `codex-plan-review/scripts/_common.sh` (implementation → gpt-5.6-luna, plan/code review → gpt-5.6-sol; derived from `STATE_DIR`). The caller sets `CODEX_TIER` to the feature's highest batch tier, never below `standard` (unset = complex/xhigh). Adjust that one file to your preferred models, or override per run via `CODEX_MODEL` / `CODEX_EFFORT` env vars; the scripts echo the effective values.
 - `--sandbox read-only`. Safe to invoke autonomously.
 - Thread IDs persisted per-target (no `--last`). Concurrent reviews don't collide.
 - Separate `STATE_DIR` from `codex-plan-review` — same key is fine.

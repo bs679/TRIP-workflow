@@ -13,14 +13,32 @@ export STATE_DIR
 mkdir -p "$STATE_DIR"
 
 # Model/effort per flow (single source of truth for all codex skills):
-# implementation runs Luna, reviews (plan + code) run Sol, effort xhigh.
+# implementation runs Luna, reviews (plan + code) run Sol.
 # Adjust these defaults to your preferred models.
-# CODEX_MODEL / CODEX_EFFORT act as per-run overrides.
+#
+# Cost tiers: the orchestrator exports CODEX_TIER=simple|standard|complex
+# per delegated batch/review so frontier compute is only spent where it
+# pays. Unset CODEX_TIER = complex (the historical default).
+#   simple   -> light model (CODEX_MODEL_LIGHT, if set) at medium effort
+#   standard -> flow model at high effort
+#   complex  -> flow model at xhigh effort
+# CODEX_MODEL / CODEX_EFFORT remain absolute per-run overrides, and
+# CODEX_MODEL_LIGHT names your provider's cheap coding model once you
+# know it (falls back to the flow model — you still save on effort).
 case "$STATE_DIR" in
-    *codex-implement*) CODEX_MODEL="${CODEX_MODEL:-gpt-5.6-luna}" ;;
-    *)                 CODEX_MODEL="${CODEX_MODEL:-gpt-5.6-sol}" ;;
+    *codex-implement*) FLOW_MODEL="gpt-5.6-luna" ;;
+    *)                 FLOW_MODEL="gpt-5.6-sol" ;;
 esac
-CODEX_EFFORT="${CODEX_EFFORT:-xhigh}"
+case "${CODEX_TIER:-complex}" in
+    simple)   TIER_EFFORT="medium"; FLOW_MODEL="${CODEX_MODEL_LIGHT:-$FLOW_MODEL}" ;;
+    standard) TIER_EFFORT="high" ;;
+    complex)  TIER_EFFORT="xhigh" ;;
+    *)
+        echo "warning: unknown CODEX_TIER='$CODEX_TIER', treating as complex" >&2
+        TIER_EFFORT="xhigh" ;;
+esac
+CODEX_MODEL="${CODEX_MODEL:-$FLOW_MODEL}"
+CODEX_EFFORT="${CODEX_EFFORT:-$TIER_EFFORT}"
 export CODEX_MODEL CODEX_EFFORT
 
 # Derive a per-target key from a path-like string. For real paths we
